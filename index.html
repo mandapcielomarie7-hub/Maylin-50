@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maylin's 50th Birthday</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap');
+
+  :root{
+    --maroon-deep: #3E0A0E;
+    --maroon: #5C1219;
+    --maroon-light: #7A1C22;
+    --gold: #D9B36C;
+    --gold-bright: #F0DBA0;
+    --gold-dark: #B58C48;
+    --cream: #F5EACB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--maroon-deep);
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 12px;
+    overflow-x: hidden;
+  }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    min-height: 92vh;
+  }
+
+  /* ===================== ENVELOPE SCREEN ===================== */
+  #envelopeScreen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 30%, var(--maroon) 0%, var(--maroon-deep) 75%);
+    z-index: 20;
+    cursor: pointer;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    overflow: hidden;
+  }
+  #envelopeScreen.hide {
+    opacity: 0;
+    transform: scale(1.06);
+    pointer-events: none;
+  }
+
+  .sparkle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold-bright);
+    opacity: 0.5;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%,100% { opacity: 0.15; transform: scale(0.8); }
+    50% { opacity: 0.7; transform: scale(1.15); }
+  }
+
+  .env-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.45em;
+    font-size: clamp(11px, 1.6vw, 14px);
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    margin-bottom: 34px;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .envelope {
+    position: relative;
+    width: min(78vw, 380px);
+    height: min(56vw, 270px);
+    transition: transform 0.35s ease;
+    perspective: 1000px;
+    overflow: visible;
+  }
+  #envelopeScreen:hover .envelope { transform: translateY(-6px); }
+
+  .env-body {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(160deg, #8A2A2E 0%, var(--maroon) 60%, var(--maroon-deep) 100%);
+    border: 1px solid var(--gold);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  }
+
+  .env-body::before {
+    /* bottom V fold lines */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top right, transparent 49.5%, rgba(217,179,108,0.35) 50%, transparent 50.5%),
+      linear-gradient(to top left, transparent 49.5%, rgba(217,179,108,0.35) 50%, transparent 50.5%);
+  }
+
+  .env-flap {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 58%;
+    background: linear-gradient(160deg, #9C3236 0%, var(--maroon-light) 70%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    border: 1px solid var(--gold);
+    border-bottom: none;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: transform 0.75s cubic-bezier(.6,.1,.3,1);
+    z-index: 5;
+  }
+  #envelopeScreen.opening .env-flap {
+    transform: rotateX(180deg);
+  }
+
+  .seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 62px;
+    height: 62px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold-dark) 75%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    z-index: 8;
+    transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
+  }
+  #envelopeScreen.opening .seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  .seal span {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--maroon-deep);
+  }
+
+  .env-letter {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 22%;
+    height: 64%;
+    background: linear-gradient(180deg, var(--cream), #EEDFB8);
+    border: 1px solid var(--gold);
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.25);
+    z-index: 1;
+    transform: translateY(0);
+    transition: transform 0.85s cubic-bezier(.2,.7,.3,1) 0.15s, z-index 0s 0.15s;
+  }
+  #envelopeScreen.opening .env-letter {
+    transform: translateY(-145%);
+    z-index: 6;
+  }
+  .tap-hint {
+    margin-top: 40px;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: clamp(11px, 1.5vw, 13px);
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    animation: pulseHint 2s ease-in-out infinite;
+  }
+  @keyframes pulseHint {
+    0%,100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+
+  /* ===================== INVITATION SCREEN ===================== */
+  #inviteScreen {
+    position: relative;
+    width: 100%;
+    min-height: 92vh;
+    background: linear-gradient(160deg, var(--maroon) 0%, var(--maroon) 55%, var(--maroon-light) 100%);
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+    opacity: 0;
+    transform: scale(0.97);
+    transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
+  }
+  #inviteScreen.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .diagonal {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 30%;
+    background: var(--maroon-light);
+    clip-path: polygon(0 100%, 100% 40%, 100% 100%);
+    opacity: 0.55;
+  }
+
+  .confetti { position: absolute; pointer-events: none; }
+
+  .content-grid {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: 1.25fr 0.9fr;
+    min-height: 92vh;
+  }
+
+  .left {
+    padding: 70px 26px 60px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .title-block {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.4em;
+    font-size: clamp(13px, 1.8vw, 17px);
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    opacity: 0;
+  }
+  #inviteScreen.show .eyebrow { animation: fadeIn 0.9s ease forwards 0.5s; }
+
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--cream);
+    line-height: 0.98;
+    font-size: clamp(44px, 6.4vw, 78px);
+    letter-spacing: 0.01em;
+    opacity: 0;
+  }
+  #inviteScreen.show .headline { animation: fadeIn 1s ease forwards 0.65s; }
+  .headline .th { font-size: 0.62em; vertical-align: super; }
+
+  .script {
+    font-family: 'Alex Brush', cursive;
+    color: var(--gold-bright);
+    font-size: clamp(70px, 10.5vw, 130px);
+    line-height: 1;
+    margin-top: 10px;
+    opacity: 0;
+  }
+  #inviteScreen.show .script { animation: fadeIn 1.1s ease forwards 0.85s; }
+
+  .date-row {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin: 46px 0 40px;
+    opacity: 0;
+  }
+  #inviteScreen.show .date-row { animation: fadeIn 1s ease forwards 1.05s; }
+  .date-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold));
+  }
+  .date-line.right { background: linear-gradient(90deg, var(--gold), var(--gold), transparent); }
+  .date-word {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: clamp(13px, 1.6vw, 16px);
+    text-transform: uppercase;
+    color: var(--cream);
+    white-space: nowrap;
+  }
+  .date-circle {
+    flex-shrink: 0;
+    width: clamp(64px, 8vw, 84px);
+    height: clamp(64px, 8vw, 84px);
+    border-radius: 50%;
+    background: var(--gold-bright);
+    color: var(--maroon-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(26px, 3.4vw, 34px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    opacity: 0;
+  }
+  #inviteScreen.show .info { animation: fadeIn 1s ease forwards 1.25s; }
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .info-row svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--gold-bright);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .info-row .text {
+    font-size: clamp(17px, 2vw, 20px);
+    font-weight: 500;
+    color: var(--cream);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+  }
+  .info-row .text.upper { text-transform: uppercase; }
+
+  .right {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .cake {
+    width: 100%;
+    max-width: 420px;
+    padding: 0 10px 30px;
+    opacity: 0;
+  }
+  #inviteScreen.show .cake { animation: fadeIn 1.3s ease forwards 0.9s; }
+
+  .garland {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    width: 60%;
+    opacity: 0;
+  }
+  #inviteScreen.show .garland { animation: fadeIn 1s ease forwards 0.7s; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 760px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .left { padding: 100px 26px 20px; text-align: left; }
+    .right { order: -1; padding-top: 40px; }
+    .cake { max-width: 260px; padding-bottom: 10px; }
+    .garland { width: 80%; top: -6px; right: -10px; }
+    #inviteScreen { min-height: unset; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- ===================== ENVELOPE SCREEN ===================== -->
+  <div id="envelopeScreen">
+    <div id="sparkles"></div>
+    <div class="env-eyebrow">A Golden Invitation Awaits</div>
+    <div class="envelope" id="envelope">
+      <div class="env-body"></div>
+      <div class="env-letter"></div>
+      <div class="env-flap"></div>
+      <div class="seal"><span>M</span></div>
+    </div>
+    <div class="tap-hint">Tap the envelope to open</div>
+  </div>
+
+  <!-- ===================== INVITATION SCREEN ===================== -->
+  <div id="inviteScreen">
+    <div class="diagonal"></div>
+
+    <div class="garland">
+      <svg viewBox="0 0 400 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 40 Q100 -20 200 40 T400 40" stroke="#D9B36C" stroke-width="2" fill="none" opacity="0.9"/>
+        <g stroke="#D9B36C" stroke-width="1.5" fill="none">
+          <path d="M20 45 q18 45 36 0" />
+          <path d="M56 48 q18 45 36 0" />
+          <path d="M92 50 q18 45 36 0" />
+          <path d="M128 50 q18 45 36 0" />
+          <path d="M164 48 q18 45 36 0" />
+          <path d="M200 46 q18 45 36 0" />
+          <path d="M236 43 q18 45 36 0" />
+          <path d="M272 40 q18 45 36 0" />
+          <path d="M308 37 q18 45 36 0" />
+          <path d="M344 35 q18 45 36 0" />
+        </g>
+        <circle cx="20" cy="45" r="3" fill="#F0DBA0"/>
+        <circle cx="92" cy="50" r="3" fill="#F0DBA0"/>
+        <circle cx="164" cy="48" r="3" fill="#F0DBA0"/>
+        <circle cx="236" cy="43" r="3" fill="#F0DBA0"/>
+        <circle cx="308" cy="37" r="3" fill="#F0DBA0"/>
+      </svg>
+    </div>
+
+    <div class="content-grid">
+      <div class="left">
+        <div class="title-block">
+          <div class="eyebrow">You are invited to</div>
+          <div class="headline">Maylin's 50<span class="th">th</span></div>
+          <div class="script">Birthday!</div>
+        </div>
+
+        <div class="date-row">
+          <span class="date-word">Tuesday</span>
+          <div class="date-line"></div>
+          <div class="date-circle">15</div>
+          <div class="date-line right"></div>
+          <span class="date-word">September</span>
+        </div>
+
+        <div class="info">
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 16,14"/></svg>
+            <div class="text upper">Starting at 5:00 PM onwards</div>
+          </div>
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.3"/></svg>
+            <div class="text upper">156 5th Street Gertrudes<br>Village Manibaug Libutad<br>Porac Pampanga</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <svg class="cake" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#D9B36C" stroke-width="2.2">
+          <g stroke-linecap="round">
+            <line x1="110" y1="150" x2="110" y2="210"/>
+            <path d="M104 145 Q110 130 116 145 Q116 155 110 155 Q104 155 104 145Z" fill="#D9B36C" stroke="none"/>
+            <line x1="145" y1="130" x2="145" y2="205"/>
+            <path d="M139 122 Q145 105 151 122 Q151 133 145 133 Q139 133 139 122Z" fill="#D9B36C" stroke="none"/>
+            <line x1="180" y1="145" x2="180" y2="210"/>
+            <path d="M174 138 Q180 122 186 138 Q186 149 180 149 Q174 149 174 138Z" fill="#D9B36C" stroke="none"/>
+            <line x1="215" y1="120" x2="215" y2="205"/>
+            <path d="M209 112 Q215 95 221 112 Q221 123 215 123 Q209 123 209 112Z" fill="#D9B36C" stroke="none"/>
+            <line x1="250" y1="140" x2="250" y2="208"/>
+            <path d="M244 133 Q250 117 256 133 Q256 144 250 144 Q244 144 244 133Z" fill="#D9B36C" stroke="none"/>
+            <line x1="285" y1="160" x2="285" y2="212"/>
+            <path d="M279 154 Q285 139 291 154 Q291 164 285 164 Q279 164 279 154Z" fill="#D9B36C" stroke="none"/>
+          </g>
+
+          <path d="M85 215 Q90 200 110 205 Q120 195 135 205 Q150 195 165 205 Q180 195 195 205 Q210 195 225 205 Q240 195 255 205 Q270 197 285 210 Q300 200 305 215 L305 260 L85 260 Z" fill="none"/>
+
+          <g>
+            <circle cx="140" cy="245" r="14" fill="none"/>
+            <path d="M140 245 Q120 230 108 245 Q120 258 140 245Z" fill="none"/>
+            <path d="M140 245 Q160 230 172 245 Q160 258 140 245Z" fill="none"/>
+          </g>
+          <g>
+            <circle cx="235" cy="242" r="14" fill="none"/>
+            <path d="M235 242 Q215 227 203 242 Q215 255 235 242Z" fill="none"/>
+            <path d="M235 242 Q255 227 267 242 Q255 255 235 242Z" fill="none"/>
+          </g>
+
+          <rect x="70" y="260" width="250" height="90" rx="4" fill="none"/>
+          <g>
+            <circle cx="120" cy="330" r="20" fill="none"/>
+            <path d="M120 330 Q90 308 72 330 Q90 350 120 330Z" fill="none"/>
+            <path d="M120 330 Q150 308 168 330 Q150 350 120 330Z" fill="none"/>
+          </g>
+          <g>
+            <circle cx="255" cy="325" r="22" fill="none"/>
+            <path d="M255 325 Q222 300 202 325 Q222 348 255 325Z" fill="none"/>
+            <path d="M255 325 Q288 300 308 325 Q288 348 255 325Z" fill="none"/>
+          </g>
+
+          <ellipse cx="195" cy="360" rx="160" ry="20" fill="none"/>
+          <path d="M60 362 Q195 400 330 362 L330 372 Q195 410 60 372 Z" fill="none"/>
+
+          <path d="M175 372 L165 430 M215 372 L225 430" />
+          <path d="M160 430 Q195 445 230 430" fill="none"/>
+          <path d="M150 460 L240 460" />
+          <path d="M160 430 L150 460 M230 430 L240 460" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // sparkles on envelope screen
+  const sparkleWrap = document.getElementById('sparkles');
+  for (let i = 0; i < 22; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const size = Math.random() * 3 + 1.5;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    sparkleWrap.style.position = 'absolute';
+    sparkleWrap.style.inset = '0';
+    sparkleWrap.style.pointerEvents = 'none';
+    sparkleWrap.appendChild(s);
+  }
+
+  const envelopeScreen = document.getElementById('envelopeScreen');
+  const inviteScreen = document.getElementById('inviteScreen');
+  let opened = false;
+
+  envelopeScreen.addEventListener('click', () => {
+    if (opened) return;
+    opened = true;
+    envelopeScreen.classList.add('opening');
+
+    setTimeout(() => {
+      inviteScreen.classList.add('show');
+    }, 550);
+
+    setTimeout(() => {
+      envelopeScreen.classList.add('hide');
+    }, 950);
+
+    setTimeout(() => {
+      envelopeScreen.style.display = 'none';
+    }, 1700);
+  });
+</script>
+
+</body>
+</html>
